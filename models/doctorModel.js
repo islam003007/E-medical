@@ -62,6 +62,14 @@ const doctorSchema = mongoose.Schema({
     min: 5,
     default: 30,
   },
+  location: {
+    type: String,
+    enum: {
+      values: ["أخميم", "سوهاج", "ساقلتة", "دار السلام", "طحطا", "طما"],
+      message: "department not supported",
+    },
+    required: [true, "A doctor must have a location"],
+  },
   clinic: String,
   summary: String,
   passwordChangedAt: Date,

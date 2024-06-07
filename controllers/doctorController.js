@@ -237,3 +237,20 @@ module.exports.myAppointments = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+module.exports.availableDepartmentsAndLocations = (req, res, next) => {
+  res.status(200).json({
+    status: "success",
+    data: {
+      locations: ["أخميم", "سوهاج", "ساقلتة", "دار السلام", "طحطا", "طما"],
+      departments: [
+        "الأطفال",
+        "القلب",
+        "العيون",
+        "الجراحة",
+        "الأسنان",
+        "العظام",
+      ],
+    },
+  });
+};

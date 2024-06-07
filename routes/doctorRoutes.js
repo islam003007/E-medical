@@ -10,6 +10,10 @@ router.post("/signup", authController.signup(Doctor));
 router.post("/login", authController.login(Doctor));
 router.post("/forgotPassword", authController.forgotPassword(Doctor));
 router.patch("/resetPassword/:token", authController.resetPassword(Doctor));
+router.get(
+  "/departmentsAndLocations",
+  doctorController.availableDepartmentsAndLocations,
+);
 router.patch(
   "/updateMyPassword",
   authController.protect(Doctor),
