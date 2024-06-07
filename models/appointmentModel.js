@@ -18,8 +18,9 @@ const appointmentSchema = mongoose.Schema({
   status: {
     type: String,
     enum: {
-      values: ["pending", "not finished", "finished"],
-      message: "status must either be pending, finished or not finished",
+      values: ["pending", "rejected", "not finished", "finished"],
+      message:
+        "status must either be pending, rejected, not finished or finished",
     },
     default: "pending",
   },

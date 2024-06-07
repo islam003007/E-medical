@@ -162,6 +162,34 @@ module.exports.acceptAppointment = catchAsync(async (req, res, next) => {
   });
 });
 
+module.exports.rejectAppointment = catchAsync(async (req, res, next) => {
+  const appointment = await Appointment.findOneAndUpdate(
+    {
+      doctor: req.user._id,
+      _id: req.body.appointment,
+      status: "pending",
+    },
+    { status: "rejected" },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+  if (!appointment)
+    return next(
+      new AppError(
+        "Appointment doesn't exist or you don't have permission to access it",
+        400,
+      ),
+    );
+  res.status(200).json({
+    status: "success",
+    data: {
+      appointment,
+    },
+  });
+});
+
 module.exports.finishAppointment = catchAsync(async (req, res, next) => {
   const appointment = await Appointment.findOneAndUpdate(
     {
