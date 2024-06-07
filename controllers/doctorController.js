@@ -5,16 +5,6 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/img/doctors");
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `doctor-${req.user.id}-${Date.now()}.${ext}`);
-  },
-});
-
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -23,12 +13,35 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
-  storage: multerStorage,
+const uploadPhoto = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "public/img/doctors");
+    },
+    filename: (req, file, cb) => {
+      const ext = file.mimetype.split("/")[1];
+      cb(null, `doctor-${req.user.id}-${Date.now()}.${ext}`);
+    },
+  }),
   fileFilter: multerFilter,
 });
 
-exports.uploadDoctorPhoto = upload.single("photo");
+const uploadIdCard = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "public/img/doctors/idCards");
+    },
+    filename: (req, file, cb) => {
+      const ext = file.mimetype.split("/")[1];
+      cb(null, `doctor-${req.body.email}-${Date.now()}.${ext}`);
+    },
+  }),
+  fileFilter: multerFilter,
+});
+
+module.exports.UploadDoctorIdCard = uploadIdCard.single("idCard");
+
+module.exports.uploadDoctorPhoto = uploadPhoto.single("photo");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -39,6 +52,36 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 module.exports.getAllDoctors = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Doctor.find(), req.query);
+  features.filter().sort().limitFields().paginate();
+
+  const doctors = await features.query.select("-idCard -email -role");
+
+  res.status(200).json({
+    status: "success",
+    results: doctors.length,
+    data: {
+      doctors,
+    },
+  });
+});
+
+module.exports.getDoctor = catchAsync(async (req, res, next) => {
+  const doctor = await Doctor.findById(req.params.id).select(
+    "-idCard -email -role",
+  );
+
+  if (!doctor) return next(new AppError("No doctor found with that ID", 404));
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      doctor,
+    },
+  });
+});
+
+module.exports.getAllDoctorsAdmin = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Doctor.find(), req.query);
   features.filter().sort().limitFields().paginate();
 
@@ -53,9 +96,8 @@ module.exports.getAllDoctors = catchAsync(async (req, res, next) => {
   });
 });
 
-module.exports.getDoctor = catchAsync(async (req, res, next) => {
+module.exports.getDoctorAdmin = catchAsync(async (req, res, next) => {
   const doctor = await Doctor.findById(req.params.id);
-
   if (!doctor) return next(new AppError("No doctor found with that ID", 404));
 
   res.status(200).json({

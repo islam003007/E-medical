@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const { xss } = require("express-xss-sanitizer");
 const mongoSanitize = require("express-mongo-sanitize");
@@ -39,6 +40,14 @@ app.use(xss());
 
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
+
+// corse
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
+  }),
+);
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/doctors", doctorRouter);

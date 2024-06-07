@@ -38,6 +38,7 @@ const createSendToken = (user, statusCode, res, sendToken = true) => {
 module.exports.signup = (Model) =>
   catchAsync(async (req, res, next) => {
     req.body.role = undefined;
+    if (req.file) req.body.idCard = req.file.filename;
     const newUser = await Model.create(req.body);
 
     createSendToken(newUser, 201, res, false);
