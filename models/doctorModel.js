@@ -15,7 +15,10 @@ const doctorSchema = mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid Email"],
   },
-  photo: String,
+  photo: {
+    type: String,
+    default: "default.png",
+  },
   role: {
     type: String,
     default: "doctor",

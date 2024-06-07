@@ -23,6 +23,7 @@ router.patch(
 router.patch(
   "/updateMe",
   authController.protect(Doctor),
+  doctorController.uploadDoctorPhoto,
   doctorController.updateMe,
 );
 
