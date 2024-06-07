@@ -1,8 +1,34 @@
+const multer = require("multer");
 const Doctor = require("../models/doctorModel");
 const Appointment = require("../models/appointmentModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/img/doctors");
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    cb(null, `doctor-${req.user.id}-${Date.now()}.${ext}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Not An image! Please upload only images", 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadDoctorPhoto = upload.single("photo");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -100,7 +126,6 @@ module.exports.updateMe = catchAsync(async (req, res, next) => {
     req.body,
     "name",
     "email",
-    "photo",
     "phoneNumber",
     "scheduleStart",
     "scheduleEnd",
@@ -108,6 +133,7 @@ module.exports.updateMe = catchAsync(async (req, res, next) => {
     "clinic",
     "summary",
   );
+  if (req.file) filteredBody.photo = req.file.filename;
   const updatedUser = await Doctor.findByIdAndUpdate(
     req.user.id,
     filteredBody,
