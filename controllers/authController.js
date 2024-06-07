@@ -11,8 +11,8 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
+const createSendToken = (user, statusCode, res, sendToken = true) => {
+  let token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
@@ -25,6 +25,7 @@ const createSendToken = (user, statusCode, res) => {
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
 
+  if (!sendToken) token = undefined;
   res.status(statusCode).json({
     status: "success",
     token,
@@ -39,7 +40,7 @@ module.exports.signup = (Model) =>
     req.body.role = undefined;
     const newUser = await Model.create(req.body);
 
-    createSendToken(newUser, 201, res);
+    createSendToken(newUser, 201, res, false);
   });
 
 module.exports.login = (Model) =>
