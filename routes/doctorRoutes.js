@@ -6,7 +6,11 @@ const User = require("../models/userModel");
 
 const router = express.Router();
 
-router.post("/signup", authController.signup(Doctor));
+router.post(
+  "/signup",
+  doctorController.UploadDoctorIdCard,
+  authController.signup(Doctor),
+);
 router.post("/login", authController.login(Doctor));
 router.post("/forgotPassword", authController.forgotPassword(Doctor));
 router.patch("/resetPassword/:token", authController.resetPassword(Doctor));
@@ -66,6 +70,20 @@ router.get(
   authController.protect(Doctor),
   authController.restrictTo("doctor"),
   doctorController.myAppointments,
+);
+
+router.get(
+  "/admin",
+  authController.protect(User),
+  authController.restrictTo("admin"),
+  doctorController.getAllDoctorsAdmin,
+);
+
+router.get(
+  "/:id/admin",
+  authController.protect(User),
+  authController.restrictTo("admin"),
+  doctorController.getDoctorAdmin,
 );
 
 router.get("/", doctorController.getAllDoctors);

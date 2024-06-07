@@ -19,6 +19,10 @@ const doctorSchema = mongoose.Schema({
     type: String,
     default: "default.png",
   },
+  idCard: {
+    type: String,
+    required: [true, "A Doctor must have an id card"],
+  },
   role: {
     type: String,
     default: "doctor",
