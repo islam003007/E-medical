@@ -14,7 +14,9 @@ const handleValidationErrorDB = (err) => {
 
 const handleDuplicateErrorDB = (err) => {
   const errors = Object.entries(err.keyValue).map((el) => `${el[0]}: ${el[1]}`);
-  const message = `Duplicate field ${errors.join(". ")}. Please use another value!`;
+  let message = `Duplicate field ${errors.join(". ")}. Please use another value!`;
+  if (errors.length === 1 && errors[0].startsWith("email"))
+    message = "هذا البريد الالكتروني مسجل من قبل";
   return new AppError(message, 400);
 };
 
