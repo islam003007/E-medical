@@ -40,6 +40,13 @@ router.post(
 );
 
 router.post(
+  "/rejectAppointment",
+  authController.protect(Doctor),
+  authController.restrictTo("doctor"),
+  doctorController.rejectAppointment,
+);
+
+router.post(
   "/finishAppointment",
   authController.protect(Doctor),
   authController.restrictTo("doctor"),
