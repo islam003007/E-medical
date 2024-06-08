@@ -144,3 +144,19 @@ module.exports.myAppointments = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+module.exports.myData = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ _id: req.user.id });
+
+  if (!user) return next(new AppError("User not found", 404));
+
+  const appointments = await Appointment.find({ patient: req.user.id });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+      appointments,
+    },
+  });
+});
