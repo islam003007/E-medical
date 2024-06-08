@@ -53,20 +53,15 @@ const doctorSchema = mongoose.Schema({
     required: [true, "A doctor must have a department"],
   },
   scheduleStart: {
-    type: Number,
-    min: 0,
-    max: 60 * 24 - 1,
-    default: 60 * 12,
+    type: Date,
+    default: "2024-06-08:12:00",
   },
   scheduleEnd: {
-    type: Number,
-    min: 0,
-    max: 60 * 24 - 1,
-    default: 60 * 17,
+    type: Date,
+    default: "2024-06-08:17:00",
   },
   scheduleInterval: {
     type: Number,
-    min: 5,
     default: 30,
   },
   location: {
