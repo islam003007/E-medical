@@ -36,7 +36,7 @@ appointmentSchema.pre(/^find/, function (next) {
     select: "name email _id photo",
   }).populate({
     path: "doctor",
-    select: "name email _id photo",
+    select: "name email _id photo phoneNumber clinic summary",
   });
   next();
 });
