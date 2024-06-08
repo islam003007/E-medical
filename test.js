@@ -7,7 +7,6 @@
 //     //   },
 //     // );
 
-
 // doctorSchema.methods.isAppointmentAvailable = async function (date) {
 //   const Appointments = await Appointment.find({ doctor: this.id });
 
