@@ -29,7 +29,7 @@ const uploadPhoto = multer({
 const uploadIdCard = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, "public/img/doctors/idCards");
+      cb(null, "private/img/idCards");
     },
     filename: (req, file, cb) => {
       const ext = file.mimetype.split("/")[1];
@@ -350,3 +350,30 @@ module.exports.availableDepartmentsAndLocations = (req, res, next) => {
     },
   });
 };
+
+module.exports.viewAvailableAppointments = catchAsync(
+  async (req, res, next) => {
+    const doctor = await Doctor.findOne({ _id: req.params.id });
+    let appointmentsDates;
+    if (!doctor) return next(new AppError("No Doctor found with that id"));
+
+    const appointments = await Appointment.find({
+      doctor: doctor._id,
+      status: "not finished",
+      date: {
+        $gte: new Date(),
+      },
+    });
+    if (appointments) {
+      appointmentsDates = appointments.map((el) => el.date);
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        scheduleStart: doctor.scheduleStart,
+        scheduleEnd: doctor.scheduleEnd,
+        appointments: appointmentsDates,
+      },
+    });
+  },
+);

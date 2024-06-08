@@ -86,6 +86,11 @@ router.get(
   doctorController.getDoctorAdmin,
 );
 
+router.get(
+  "/:id/availableAppointments",
+  doctorController.viewAvailableAppointments,
+);
+
 router.get("/", doctorController.getAllDoctors);
 router.get("/:id", doctorController.getDoctor);
 
