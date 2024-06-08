@@ -98,7 +98,10 @@ module.exports.signup = (Model) =>
     const newUser = await Model.create(req.body);
     req.tempUser = newUser;
 
-    sendConfirmationEmail(req, res, next);
+    if (Model === User) sendConfirmationEmail(req, res, next);
+    else {
+      createSendToken(newUser, 200, res, false);
+    }
   });
 
 module.exports.login = (Model) =>
