@@ -52,7 +52,7 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 module.exports.getAllDoctors = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Doctor.find(), req.query);
+  const features = new APIFeatures(Doctor.find({ confirmed: true }), req.query);
   features.filter().sort().limitFields().paginate();
 
   const doctors = await features.query.select("-idCard -email -role");
@@ -70,8 +70,10 @@ module.exports.getDoctor = catchAsync(async (req, res, next) => {
   const doctor = await Doctor.findById(req.params.id).select(
     "-idCard -email -role",
   );
-
   if (!doctor) return next(new AppError("No doctor found with that ID", 404));
+
+  if (!doctor.confirmed)
+    return next(new AppError("This doctor is not confirmed yet", 401));
 
   res.status(200).json({
     status: "success",
@@ -372,6 +374,7 @@ module.exports.viewAvailableAppointments = catchAsync(
       data: {
         scheduleStart: doctor.scheduleStart,
         scheduleEnd: doctor.scheduleEnd,
+        scheduleInterval: doctor.scheduleInterval,
         appointments: appointmentsDates,
       },
     });

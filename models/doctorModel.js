@@ -77,6 +77,10 @@ const doctorSchema = mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   PasswordResetExpires: Date,
+  confirmed: {
+    type: Boolean,
+    default: false,
+  },
   active: {
     type: Boolean,
     default: true,

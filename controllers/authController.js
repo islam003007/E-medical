@@ -87,7 +87,7 @@ module.exports.confirmAccount = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: "your account was confirmed",
+    message: "Your account was confirmed",
   });
 });
 
@@ -100,7 +100,11 @@ module.exports.signup = (Model) =>
 
     if (Model === User) sendConfirmationEmail(req, res, next);
     else {
-      createSendToken(newUser, 200, res, false);
+      res.status(200).json({
+        status: "success",
+        message:
+          "Your Id card was send to us, we will check it and send you a confirmation email ",
+      });
     }
   });
 
@@ -116,15 +120,10 @@ module.exports.login = (Model) =>
     if (!user || !(await user.correctPassword(password)))
       return next(new AppError("Incorrect email or password", 401));
 
-    if (Model === User) {
-      if (!user.confirmed) {
-        return next(
-          new AppError(
-            "account not confirmed check you email to confirm your account",
-            401,
-          ),
-        );
-      }
+    if (!user.confirmed) {
+      return next(
+        new AppError("This account is not confirmed check your email", 401),
+      );
     }
 
     createSendToken(user, 200, res);
