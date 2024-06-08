@@ -38,8 +38,14 @@ const userSchema = mongoose.Schema({
   },
   phoneNumber: String,
   passwordChangedAt: Date,
+  passwordConfirmationToken: String,
+  confirmationTokenExpires: Date,
   passwordResetToken: String,
   PasswordResetExpires: Date,
+  confirmed: {
+    type: Boolean,
+    default: false,
+  },
   active: {
     type: Boolean,
     default: true,
@@ -94,6 +100,19 @@ userSchema.methods.createPasswordResetToken = function () {
   this.PasswordResetExpires = Date.now() + 1000 * 60 * 10;
 
   return resetToken;
+};
+
+userSchema.methods.createConfirmationToken = function () {
+  const confirmationToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordConfirmationToken = crypto
+    .createHash("sha256")
+    .update(confirmationToken)
+    .digest("hex");
+
+  this.confirmationTokenExpires = Date.now() + 1000 * 60 * 60 * 6;
+
+  return confirmationToken;
 };
 
 const User = mongoose.model("User", userSchema);

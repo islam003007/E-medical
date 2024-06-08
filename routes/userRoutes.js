@@ -10,6 +10,7 @@ router.post("/signup", authController.signup(User));
 router.post("/login", authController.login(User));
 router.post("/forgotPassword", authController.forgotPassword(User));
 router.patch("/resetPassword/:token", authController.resetPassword(User));
+router.get("/confirmAccount/:token", authController.confirmAccount);
 router.patch(
   "/updateMyPassword",
   authController.protect(User),
