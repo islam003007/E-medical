@@ -272,11 +272,14 @@ module.exports.finishAppointment = catchAsync(async (req, res, next) => {
       examination: {
         diagnosis: req.body.diagnosis,
         prescription: req.body.prescription,
+        patientAge: req.body.patientAge,
+        patientName: req.body.patientName,
+        patientAddress: req.body.patientAddress,
+        date: req.body.date,
       },
     },
     {
       new: true,
-      runValidators: true,
     },
   );
   if (!appointment)

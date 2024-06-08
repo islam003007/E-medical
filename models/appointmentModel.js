@@ -27,6 +27,10 @@ const appointmentSchema = mongoose.Schema({
   examination: {
     diagnosis: String,
     prescription: String,
+    patientAge: String,
+    patientName: String,
+    patientAddress: String,
+    date: Date,
   },
 });
 
