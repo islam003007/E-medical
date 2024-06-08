@@ -10,6 +10,8 @@ const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
 const doctorRouter = require("./routes/doctorRoutes");
 const appointmentRouter = require("./routes/appointmentRoutes");
+const authController = require("./controllers/authController");
+const User = require("./models/userModel");
 
 const app = express();
 
@@ -53,8 +55,11 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/doctors", doctorRouter);
 app.use("/api/v1/appointments", appointmentRouter);
 app.all("*", (req, res, next) => {
+  if (req.originalUrl.startsWith("/img/idCards")) return next();
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+app.use(authController.protect(User), authController.restrictTo("admin"));
+app.use(express.static(`${__dirname}/private`));
 app.use(globalErrorHandler);
 
 module.exports = app;

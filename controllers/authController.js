@@ -117,11 +117,14 @@ module.exports.login = (Model) =>
       return next(new AppError("Incorrect email or password", 401));
 
     if (Model === User) {
-      if (!user.confirmed)
-        return new (AppError(
-          "account not confirmed check you email to confirm your account",
-          401,
-        ))();
+      if (!user.confirmed) {
+        return next(
+          new AppError(
+            "account not confirmed check you email to confirm your account",
+            401,
+          ),
+        );
+      }
     }
 
     createSendToken(user, 200, res);
