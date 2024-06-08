@@ -42,6 +42,12 @@ router.get(
   authController.restrictTo("user"),
   userController.myAppointments,
 );
+router.get(
+  "/myData",
+  authController.protect(User),
+  authController.restrictTo("user"),
+  userController.myData,
+);
 
 router.use(authController.protect(User));
 router.use(authController.restrictTo("admin"));
