@@ -5,6 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/email");
 const Doctor = require("../models/doctorModel");
+const User = require("../models/userModel");
 
 const signToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -35,13 +36,69 @@ const createSendToken = (user, statusCode, res, sendToken = true) => {
   });
 };
 
+const sendConfirmationEmail = catchAsync(async (req, res, next) => {
+  const user = req.tempUser;
+  const ConfirmationToken = user.createConfirmationToken();
+  await user.save({ validateBeforeSave: false });
+
+  const url = `${req.protocol}://${req.get("host")}/api/v1/users/confirmAccount/${ConfirmationToken}`;
+  const message = `To confirm you account please click this link: <a href="${url}">${url}</a>`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Confirm Email",
+      message,
+    });
+    res.status(200).json({
+      status: "success",
+      message: "your confirmation link was sent to you email",
+    });
+  } catch {
+    user.passwordConfirmationToken = undefined;
+    user.confirmationTokenExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new AppError(
+        "There was an error sending the confirmation link to your email. Try again later!",
+      ),
+      500,
+    );
+  }
+});
+
+module.exports.confirmAccount = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    passwordConfirmationToken: hashedToken,
+    confirmationTokenExpires: { $gt: Date.now() },
+  });
+
+  if (!user) return next(new AppError("Token is invalid or has expired", 400));
+
+  user.passwordConfirmationToken = undefined;
+  user.confirmationTokenExpires = undefined;
+  user.confirmed = true;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: "success",
+    message: "your account was confirmed",
+  });
+});
+
 module.exports.signup = (Model) =>
   catchAsync(async (req, res, next) => {
     req.body.role = undefined;
     if (req.file) req.body.idCard = req.file.filename;
     const newUser = await Model.create(req.body);
+    req.tempUser = newUser;
 
-    createSendToken(newUser, 201, res, false);
+    sendConfirmationEmail(req, res, next);
   });
 
 module.exports.login = (Model) =>
@@ -55,6 +112,14 @@ module.exports.login = (Model) =>
 
     if (!user || !(await user.correctPassword(password)))
       return next(new AppError("Incorrect email or password", 401));
+
+    if (Model === User) {
+      if (!user.confirmed)
+        return new (AppError(
+          "account not confirmed check you email to confirm your account",
+          401,
+        ))();
+    }
 
     createSendToken(user, 200, res);
   });
