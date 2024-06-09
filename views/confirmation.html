@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eslam nagy</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+        margin: 0;
+      }
+      .confirmation-message {
+        text-align: center;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        animation: fadeIn 1s ease-in-out;
+      }
+      .confirmation-message h1 {
+        color: #4caf50;
+        margin-bottom: 20px;
+      }
+      .checkmark {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #4caf50;
+        position: relative;
+        animation: scaleIn 0.5s ease-in-out;
+      }
+      .checkmark::before {
+        content: "";
+        position: absolute;
+        width: 15px;
+        height: 30px;
+        border: solid white;
+        border-width: 0 5px 5px 0;
+        transform: rotate(45deg);
+        top: 20px;
+        left: 28px;
+      }
+      @keyframes scaleIn {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="confirmation-message">
+      <div class="checkmark"></div>
+      <h1>تم تأكيد حسابك</h1>
+      <p>
+        شكرًا لك على تأكيد حسابك، إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة
+      </p>
+      <p>لا تتردد في التواصل معنا</p>
+    </div>
+  </body>
+</html>

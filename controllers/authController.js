@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const path = require("path");
 const crypto = require("crypto");
 const { promisify } = require("util");
 const catchAsync = require("../utils/catchAsync");
@@ -75,7 +76,6 @@ module.exports.confirmAccount = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({
     passwordConfirmationToken: hashedToken,
-    confirmationTokenExpires: { $gt: Date.now() },
   });
 
   if (!user) return next(new AppError("Token is invalid or has expired", 400));
@@ -85,10 +85,8 @@ module.exports.confirmAccount = catchAsync(async (req, res, next) => {
   user.confirmed = true;
   await user.save({ validateBeforeSave: false });
 
-  res.status(200).json({
-    status: "success",
-    message: "Your account was confirmed",
-  });
+  const absolutePath = path.join(__dirname, "../views/confirmation.html");
+  res.sendFile(absolutePath);
 });
 
 module.exports.signup = (Model) =>
