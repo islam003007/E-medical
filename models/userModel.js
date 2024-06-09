@@ -110,8 +110,6 @@ userSchema.methods.createConfirmationToken = function () {
     .update(confirmationToken)
     .digest("hex");
 
-  this.confirmationTokenExpires = Date.now() + 1000 * 60 * 60 * 6;
-
   return confirmationToken;
 };
 

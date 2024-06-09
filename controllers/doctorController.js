@@ -19,8 +19,7 @@ const uploadPhoto = multer({
       cb(null, "public/img/doctors");
     },
     filename: (req, file, cb) => {
-      const ext = file.mimetype.split("/")[1];
-      cb(null, `doctor-${req.user.id}-${Date.now()}.${ext}`);
+      cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
     },
   }),
   fileFilter: multerFilter,
