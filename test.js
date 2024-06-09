@@ -25,3 +25,12 @@
 //   }
 //   return availableAppointments;
 // };
+
+const getTime = (time) => {
+  const hours = new Date(time).getHours();
+  const newHours = hours > 12 ? hours - 12 : hours;
+  const minutes = new Date(time).getMinutes();
+
+  return `${newHours < 9 ? 0 : ""}${newHours}:${minutes}${minutes < 10 ? 0 : ""} ${hours > 12 ? "PM" : "AM"}`;
+};
+console.log(getTime("2024-06-08T12:12:00.000Z"));

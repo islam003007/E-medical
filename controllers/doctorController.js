@@ -237,7 +237,7 @@ module.exports.rejectAppointment = catchAsync(async (req, res, next) => {
     {
       doctor: req.user._id,
       _id: req.body.appointment,
-      status: "pending",
+      status: { $ne: "finished" },
     },
     { status: "rejected" },
     {
