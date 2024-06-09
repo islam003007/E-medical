@@ -62,6 +62,7 @@ module.exports.UploadDoctorIdCard = uploadIdCard.single("photo");
 module.exports.uploadMulter = uploadPhoto.single("photo");
 
 module.exports.uploadDoctorPhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
   const dir = path.join(__dirname, "../public/img/doctors", req.file.filename);
   const photoObj = await uploadCloudinary(dir);
   req.file.filename = photoObj.secure_url;
