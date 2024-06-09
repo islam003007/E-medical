@@ -1,17 +1,18 @@
 const multer = require("multer");
+const cloudinary = require("cloudinary");
+const path = require("path");
 const Doctor = require("../models/doctorModel");
 const Appointment = require("../models/appointmentModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
-const cloudinary = require("cloudinary");
-const path = require("path");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
   api_secret: process.env.CLOUD_API_SECRET,
 });
+
 const uploadCloudinary = async (pathFileTOUpload) => {
   try {
     const image = await cloudinary.uploader.upload(pathFileTOUpload, {

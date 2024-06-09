@@ -17,7 +17,8 @@ const doctorSchema = mongoose.Schema({
   },
   photo: {
     type: String,
-    default: "default.png",
+    default:
+      "https://res.cloudinary.com/dtk7ufofp/image/upload/v1717974296/oqsmr4xbaynfhaocpmc1.png",
   },
   idCard: {
     type: String,
