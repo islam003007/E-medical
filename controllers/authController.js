@@ -94,6 +94,7 @@ module.exports.confirmAccount = catchAsync(async (req, res, next) => {
 module.exports.signup = (Model) =>
   catchAsync(async (req, res, next) => {
     req.body.role = undefined;
+    console.log(req.body);
     if (req.file) req.body.idCard = req.file.filename;
     const newUser = await Model.create(req.body);
     req.tempUser = newUser;
