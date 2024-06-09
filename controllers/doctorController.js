@@ -226,7 +226,9 @@ module.exports.acceptAppointment = catchAsync(async (req, res, next) => {
     );
   res.status(200).json({
     status: "success",
-    appointment,
+    data: {
+      appointment,
+    },
   });
 });
 
@@ -252,7 +254,9 @@ module.exports.rejectAppointment = catchAsync(async (req, res, next) => {
     );
   res.status(200).json({
     status: "success",
-    appointment,
+    data: {
+      appointment,
+    },
   });
 });
 
