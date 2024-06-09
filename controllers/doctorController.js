@@ -323,14 +323,22 @@ module.exports.showMedicalHistory = catchAsync(async (req, res, next) => {
 module.exports.myAppointments = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Appointment.find(), req.query);
   features.filter().sort().limitFields().paginate();
+  let returnData;
 
   const appointments = await features.query.find({ doctor: req.user.id });
+  if (appointments)
+    returnData = appointments.map((el) => ({
+      name: el.doctor.name,
+      status: el.status,
+      date: el.date,
+      email: el.patient.email,
+    }));
 
   res.status(200).json({
     status: "success",
     results: appointments.length,
     data: {
-      appointments,
+      appointments: returnData,
     },
   });
 });
