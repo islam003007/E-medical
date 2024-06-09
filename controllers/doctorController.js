@@ -39,7 +39,7 @@ const uploadIdCard = multer({
   fileFilter: multerFilter,
 });
 
-module.exports.UploadDoctorIdCard = uploadIdCard.single("idCard");
+module.exports.UploadDoctorIdCard = uploadIdCard.single("photo");
 
 module.exports.uploadDoctorPhoto = uploadPhoto.single("photo");
 
