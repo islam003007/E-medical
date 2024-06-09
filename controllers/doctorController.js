@@ -4,6 +4,24 @@ const Appointment = require("../models/appointmentModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
+const cloudinary = require("cloudinary");
+const path = require("path");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+const uploadCloudinary = async (pathFileTOUpload) => {
+  try {
+    const image = await cloudinary.uploader.upload(pathFileTOUpload, {
+      resource_type: "auto",
+    });
+    return image;
+  } catch (error) {
+    return error;
+  }
+};
 
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
@@ -40,7 +58,16 @@ const uploadIdCard = multer({
 
 module.exports.UploadDoctorIdCard = uploadIdCard.single("photo");
 
-module.exports.uploadDoctorPhoto = uploadPhoto.single("photo");
+module.exports.uploadMulter = uploadPhoto.single("photo");
+
+module.exports.uploadDoctorPhoto = catchAsync(async (req, res, next) => {
+  const dir = path.join(__dirname, "../public/img/doctors", req.file.filename);
+  const photoObj = await uploadCloudinary(dir);
+  req.file.filename = photoObj.secure_url;
+  next();
+});
+
+//secure_url
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};

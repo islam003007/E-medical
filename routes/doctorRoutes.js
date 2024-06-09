@@ -27,6 +27,7 @@ router.patch(
 router.patch(
   "/updateMe",
   authController.protect(Doctor),
+  doctorController.uploadMulter,
   doctorController.uploadDoctorPhoto,
   doctorController.updateMe,
 );
