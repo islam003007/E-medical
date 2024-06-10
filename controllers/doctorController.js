@@ -326,20 +326,7 @@ module.exports.finishAppointment = catchAsync(async (req, res, next) => {
 });
 
 module.exports.showMedicalHistory = catchAsync(async (req, res, next) => {
-  let appointments = await Appointment.findOne({
-    doctor: req.user.id,
-    patient: req.params.id,
-    status: "not finished",
-  });
-
-  if (!appointments)
-    return next(
-      new AppError(
-        "patient does not exist or you do not have access to this patient's medical history",
-      ),
-    );
-
-  appointments = await Appointment.find({
+  const appointments = await Appointment.find({
     patient: req.params.id,
     status: "finished",
   });
